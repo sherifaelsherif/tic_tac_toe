@@ -1,5 +1,0 @@
-if(EXISTS "C:/Users/usar/Downloads/my-github/tic_tac_toe/build/tests/runTests[1]_tests.cmake")
-  include("C:/Users/usar/Downloads/my-github/tic_tac_toe/build/tests/runTests[1]_tests.cmake")
-else()
-  add_test(runTests_NOT_BUILT runTests_NOT_BUILT)
-endif()

@@ -7,31 +7,25 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v3
- 
+
+      - name: Init submodules
+        run: git submodule update --init --recursive
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake g++ make
 
-      - name: Clean previous build cache
-        run: rm -rf build
-        working-directory: ${{ github.workspace }}
-
       - name: Configure with CMake
-        run: cmake -S tic_tac_toe -B build
-        working-directory: ${{ github.workspace }}
-
+        run: cmake -S . -B build
 
       - name: Build the project
         run: cmake --build build
-        working-directory: ${{ github.workspace}}
 
       - name: Run tests
-        run: ctest --test-dir build --output-on-failure
-        working-directory: ${{ github.workspace}}
-
+        run: ctest --output-on-failure
+        working-directory: build

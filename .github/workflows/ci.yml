@@ -29,6 +29,9 @@ jobs:
         run: cmake --build build
         working-directory: ${{ github.workspace }}/tic_tac_toe
 
+       
+
       - name: Run tests
-        run: ./build/run_tests
-        working-directory: ${{ github.workspace }}/tic_tac_toe
+       run: ctest --output-on-failure
+       working-directory: ${{ github.workspace }}/tic_tac_toe/build
+  

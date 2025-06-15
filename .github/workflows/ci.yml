@@ -7,15 +7,14 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo into top-level folder
         uses: actions/checkout@v3
-
-      - name: Init submodules
-        run: git submodule update --init --recursive
+        with:
+          path: .
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake g++ make
@@ -27,5 +26,4 @@ jobs:
         run: cmake --build build
 
       - name: Run tests
-        run: ctest --output-on-failure
-        working-directory: build
+        run: ctest --test-dir build --output-on-failure

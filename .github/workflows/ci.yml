@@ -14,20 +14,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: .
+          path: tic_tac_toe
 
       - name: Init submodules
         run: git submodule update --init --recursive
+        working-directory: tic_tac_toe
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake g++ make
 
       - name: Configure with CMake
         run: cmake -S . -B build
+        working-directory: tic_tac_toe
 
       - name: Build the project
         run: cmake --build build
+        working-directory: tic_tac_toe
 
       - name: Run tests
         run: ctest --output-on-failure
-        working-directory: build
+        working-directory: tic_tac_toe/build

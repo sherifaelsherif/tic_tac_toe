@@ -1,0 +1,11 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/usar/Downloads/my-github/tic_tac_toe/build/cmake_install.cmake",
+		"C:/Users/usar/Downloads/my-github/tic_tac_toe/build/tests/cmake_install.cmake",
+		"C:/Users/usar/Downloads/my-github/tic_tac_toe/build/tests/googletest-build/cmake_install.cmake",
+		"C:/Users/usar/Downloads/my-github/tic_tac_toe/build/tests/googletest-build/googlemock/cmake_install.cmake",
+		"C:/Users/usar/Downloads/my-github/tic_tac_toe/build/tests/googletest-build/googletest/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

@@ -13,8 +13,7 @@ jobs:
     steps:
       - name: Checkout repo into top-level folder
         uses: actions/checkout@v3
-        with:
-          path: .
+         
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake g++ make

@@ -15,14 +15,16 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev
       - name: Install Qt6
-        uses: mxschmitt/action-qt@v4
+        uses: mxschmitt/action-qt@v3
         with:
           version: '6.9.1'
           target: 'desktop'
           arch: 'gcc_64'
           dir: '${{ github.workspace }}/qt'
+      - name: Verify Qt6 installation
+        run: find ${{ github.workspace }}/qt -name Qt6Config.cmake
       - name: Configure with CMake
-        run: cmake -S . -B build -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt/6.9.1/gcc_64
+        run: cmake -S . -B build -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt/6.9.1/gcc_64 -DCMAKE_VERBOSE_MAKEFILE=ON
       - name: Build the project
         run: cmake --build build --parallel 2
       - name: Run tests

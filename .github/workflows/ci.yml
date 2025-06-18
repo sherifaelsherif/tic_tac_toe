@@ -1,31 +1,30 @@
 name: Build & Test
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
       - name: Init submodules
         run: git submodule update --init --recursive
-
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake g++ make
-
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev
+      - name: Install Qt6
+        uses: mxschmitt/action-qt@v4
+        with:
+          version: '6.9.1'
+          target: 'desktop'
+          arch: 'gcc_64'
+          dir: '${{ github.workspace }}/qt'
       - name: Configure with CMake
-        run: cmake -S . -B build
-
+        run: cmake -S . -B build -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt/6.9.1/gcc_64
       - name: Build the project
-        run: cmake --build build
-
+        run: cmake --build build --parallel 2
       - name: Run tests
         run: ctest --output-on-failure
         working-directory: build

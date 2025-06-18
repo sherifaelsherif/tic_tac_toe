@@ -18,11 +18,14 @@ jobs:
         run: git submodule update --init --recursive
 
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev \ qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-test-dev qt6-sql-dev
-  
-
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev qt6-base-dev qt6-tools-dev qt6-tools-dev-tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake g++ make \
+            libgl1-mesa-dev libopengl-dev \
+            qt6-base-dev qt6-base-dev-tools \
+            qt6-tools-dev qt6-tools-dev-tools \
+            qt6-test-dev
 
       - name: Verify Qt6 installation
         run: find /usr/lib/x86_64-linux-gnu/cmake/Qt6 -name Qt6Config.cmake || echo "Qt6 not found via apt-get"

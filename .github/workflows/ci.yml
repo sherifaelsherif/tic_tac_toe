@@ -18,6 +18,10 @@ jobs:
         run: git submodule update --init --recursive
 
       - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev \ qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-test-dev qt6-sql-dev
+  
+
+      - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev qt6-base-dev qt6-tools-dev qt6-tools-dev-tools
 
       - name: Verify Qt6 installation

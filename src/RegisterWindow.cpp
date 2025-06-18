@@ -1,4 +1,3 @@
-
 #include "RegisterWindow.h"
 #include <QVBoxLayout>
 #include <QLabel>

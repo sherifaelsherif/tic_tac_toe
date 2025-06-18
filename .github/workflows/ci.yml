@@ -13,20 +13,30 @@ jobs:
       - name: Init submodules
         run: git submodule update --init --recursive
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev
-      - name: Install Qt6
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev qt6-base-dev qt6-tools-dev-tools
+      - name: Verify Qt6 apt installation
+        run: find /usr/lib/x86_64-linux-gnu/cmake/Qt6 -name Qt6Config.cmake || echo "Qt6 not found via apt-get"
+      - name: Try installing Qt6 via action-qt
         uses: mxschmitt/action-qt@v3
+        continue-on-error: true  # Continue even if action fails
         with:
           version: '6.9.1'
           target: 'desktop'
           arch: 'gcc_64'
           dir: '${{ github.workspace }}/qt'
-      - name: Verify Qt6 installation
-        run: find ${{ github.workspace }}/qt -name Qt6Config.cmake
+      - name: Verify Qt6 action-qt installation
+        run: find ${{ github.workspace }}/qt -name Qt6Config.cmake || echo "Failed to install Qt6 via action-qt"
       - name: Configure with CMake
-        run: cmake -S . -B build -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt/6.9.1/gcc_64 -DCMAKE_VERBOSE_MAKEFILE=ON
+        run: |
+          if [ -d "${{ github.workspace }}/qt/6.9.1/gcc_64" ]; then
+            echo "Using Qt6 from action-qt"
+            cmake -S . -B build -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt/6.9.1/gcc_64 -DCMAKE_VERBOSE_MAKEFILE=ON
+          else
+            echo "Using Qt6 from apt-get"
+            cmake -S . -B build -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 -DCMAKE_VERBOSE_MAKEFILE=ON
+          fi
       - name: Build the project
-        run: cmake --build build --parallel 2
+        run: cmake --build build --parallel 4
       - name: Run tests
-        run: ctest --output-on-failure
+        run: ctest --verbose
         working-directory: build

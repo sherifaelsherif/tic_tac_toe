@@ -11,29 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4 # Updated to latest version
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Init submodules
-      run: git submodule update --init --recursive
+      - name: Init submodules
+        run: git submodule update --init --recursive
 
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y cmake g++ make libgl1-mesa-dev
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ make
 
-    - name: Install Qt6
-      uses: mxschmitt/action-qt@v4 # Use action to install Qt
-      with:
-      version: '6.9.1' # Match your local version
-      target: 'desktop'
-      arch: 'gcc_64'
-      dir: '${{ github.workspace }}/qt'
+      - name: Configure with CMake
+        run: cmake -S . -B build
 
-    - name: Configure with CMake
-      run: cmake -S . -B build -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qt/6.9.1/gcc_64
+      - name: Build the project
+        run: cmake --build build
 
-    - name: Build the project
-      run: cmake --build build --parallel 2 # Limit parallel jobs to avoid memory issues
-
-    - name: Run tests
-      run: ctest --output-on-failure
-      working-directory: build    
+      - name: Run tests
+        run: ctest --output-on-failure
+        working-directory: build

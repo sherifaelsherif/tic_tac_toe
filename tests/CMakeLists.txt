@@ -37,11 +37,11 @@ target_link_libraries(testGame PRIVATE ${COMMON_TEST_LIBS})
 add_test(NAME GameTests COMMAND testGame)
 
 # ---------------- MainWindow Test (optional) ----------------
-# add_executable(testMainWindow ${MAINWINDOW_TEST_SOURCES})
-# set_target_properties(testMainWindow PROPERTIES AUTOMOC ON)
-# target_include_directories(testMainWindow PRIVATE ${TEST_INCLUDE_DIRS})
-# target_link_libraries(testMainWindow PRIVATE ${COMMON_TEST_LIBS})
-# add_test(NAME MainWindowTests COMMAND testMainWindow)
+add_executable(testMainWindow ${MAINWINDOW_TEST_SOURCES})
+set_target_properties(testMainWindow PROPERTIES AUTOMOC ON)
+target_include_directories(testMainWindow PRIVATE ${TEST_INCLUDE_DIRS})
+target_link_libraries(testMainWindow PRIVATE ${COMMON_TEST_LIBS})
+add_test(NAME MainWindowTests COMMAND testMainWindow)
 
 # ---------------- Database Test ----------------
 add_executable(testDatabase ${DATABASE_TEST_SOURCES})

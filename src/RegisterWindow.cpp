@@ -5,14 +5,14 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 
-RegisterWindow::RegisterWindow(Database *db, QWidget *parent) : QMainWindow(parent), db(db) {
+RegisterWindow::RegisterWindow(Database *db, QWidget *parent)
+    : QMainWindow(parent), db(db) {
     setMinimumSize(350, 450);
     setupUI();
 
     setStyleSheet(QStringLiteral(
         "QMainWindow {"
         "    background: qradialgradient(cx:0.5, cy:0.5, radius:1, fx:0.5, fy:0.5, stop:0 #0a0a1a, stop:1 #1c1c3a);"
-        "    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVChTY5i5f/8/Axjo6RlaWVkZGBgYGIiJiUlqampqa2vrt7e3t3d0dHT09PT09vb29vYODg72tra2Dg4ODg5OTk5OTi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLhYAXtY5pAAAAABJRU5ErkJggg==');"
         "    color: #ffffff;"
         "}"
         "QLineEdit {"
@@ -22,8 +22,6 @@ RegisterWindow::RegisterWindow(Database *db, QWidget *parent) : QMainWindow(pare
         "    border-radius: 5px;"
         "    padding: 5px;"
         "    font-size: 14px;"
-        "    font-family: 'Orbitron', 'Arial', sans-serif;"
-        "    text-shadow: 0 0 5px #bb00ff;"
         "}"
         "QLineEdit:focus {"
         "    border: 2px solid #ff00ff;"
@@ -35,19 +33,14 @@ RegisterWindow::RegisterWindow(Database *db, QWidget *parent) : QMainWindow(pare
         "    border-radius: 8px;"
         "    padding: 8px;"
         "    font-size: 16px;"
-        "    font-family: 'Orbitron', 'Arial', sans-serif;"
-        "    text-shadow: 0 0 5px #bb00ff;"
         "}"
         "QPushButton:hover {"
         "    background-color: rgba(60, 60, 90, 0.8);"
         "    border: 2px solid #ff00ff;"
-        "    text-shadow: 0 0 10px #ff00ff;"
         "}"
         "QLabel {"
         "    color: #e0e0ff;"
-        "    font-family: 'Orbitron', 'Arial', sans-serif;"
-        "}"
-        ));
+        "}"));
 }
 
 void RegisterWindow::setupUI() {
@@ -58,20 +51,11 @@ void RegisterWindow::setupUI() {
     mainLayout->addSpacerItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     QLabel *titleLabel = new QLabel("REGISTER", this);
-    titleLabel->setStyleSheet(QStringLiteral(
-        "font-size: 28px;"
-        "font-weight: bold;"
-        "color: #00eaff;"
-        "text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;"
-        ));
+    titleLabel->setStyleSheet("font-size: 28px; font-weight: bold; color: #00eaff;");
     mainLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
 
     QLabel *welcomeLabel = new QLabel("CREATE A NEW ACCOUNT", this);
-    welcomeLabel->setStyleSheet(QStringLiteral(
-        "font-size: 14px;"
-        "color: #bb00ff;"
-        "text-shadow: 0 0 8px #bb00ff;"
-        ));
+    welcomeLabel->setStyleSheet("font-size: 14px; color: #bb00ff;");
     mainLayout->addWidget(welcomeLabel, 0, Qt::AlignCenter);
 
     QVBoxLayout *formLayout = new QVBoxLayout();
@@ -107,7 +91,6 @@ void RegisterWindow::setupUI() {
 
     mainLayout->addLayout(formLayout);
     mainLayout->setAlignment(formLayout, Qt::AlignCenter);
-
     mainLayout->addSpacerItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     connect(registerButton, &QPushButton::clicked, this, &RegisterWindow::attemptRegister);
@@ -165,33 +148,42 @@ void RegisterWindow::cancelRegistration() {
 }
 
 void RegisterWindow::updatePasswordStrength() {
-    QString password = passwordEdit->text();
-    int length = password.length();
-    bool hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+    const QString password = passwordEdit->text();
+    const int     length   = password.length();
+
+    bool hasUpper   = false;
+    bool hasLower   = false;
+    bool hasDigit   = false;
+    bool hasSpecial = false;
 
     for (const QChar &c : password) {
-        if (c.isUpper()) hasUpper = true;
-        if (c.isLower()) hasLower = true;
-        if (c.isDigit()) hasDigit = true;
-        if (!c.isLetterOrNumber()) hasSpecial = true;
+        hasUpper   |= c.isUpper();
+        hasLower   |= c.isLower();
+        hasDigit   |= c.isDigit();
+        hasSpecial |= !c.isLetterOrNumber();
     }
 
-    int strength = 0;
-    if (length >= 6) strength++;
-    if (length >= 8) strength++;
-    if (hasUpper) strength++;
-    if (hasLower) strength++;
-    if (hasDigit) strength++;
-    if (hasSpecial) strength++;
+    int score = 0;
+    if (length >= 8) score++;
+    if (hasUpper)    score++;
+    if (hasLower)    score++;
+    if (hasDigit)    score++;
+    if (hasSpecial)  score++;
 
-    if (strength <= 2) {
-        passwordStrengthLabel->setText("PASSWORD STRENGTH: WEAK");
-        passwordStrengthLabel->setStyleSheet("font-size: 12px; color: #ff5555;");
-    } else if (strength <= 4) {
-        passwordStrengthLabel->setText("PASSWORD STRENGTH: MEDIUM");
-        passwordStrengthLabel->setStyleSheet("font-size: 12px; color: #ffaa00;");
+    QString strength;
+    QString color;
+
+    if (score <= 2) {
+        strength = "WEAK";
+        color    = "#ff5555";
+    } else if (score <= 4) {
+        strength = "MEDIUM";
+        color    = "#ffaa00";
     } else {
-        passwordStrengthLabel->setText("PASSWORD STRENGTH: STRONG");
-        passwordStrengthLabel->setStyleSheet("font-size: 12px; color: #55ff55;");
+        strength = "STRONG";
+        color    = "#55ff55";
     }
+
+    passwordStrengthLabel->setText("PASSWORD STRENGTH: " + strength);
+    passwordStrengthLabel->setStyleSheet("font-size: 12px; color: " + color + ";");
 }

@@ -1,0 +1,48 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Init submodules
+        run: git submodule update --init --recursive
+
+      - name: Install dependencies
+        run:  |
+         sudo apt-get update
+         sudo apt-get install -y \
+         cmake g++ make \
+         libgl1-mesa-dev libopengl-dev \
+         qt6-base-dev qt6-base-dev-tools \
+         qt6-tools-dev qt6-tools-dev-tools
+
+      - name: Verify Qt6 installation
+        run: find /usr/lib/x86_64-linux-gnu/cmake/Qt6 -name Qt6Config.cmake || echo "Qt6 not found via apt-get"
+
+      - name: Configure with CMake
+        run: cmake -S . -B build -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6 -DCMAKE_VERBOSE_MAKEFILE=ON
+
+      - name: Build the project
+        run:  |
+          cmake --build build --parallel 4
+          if [ $? -ne 0 ]; then
+          echo "::error :: Build failed"
+          exit 1
+          fi
+
+      - name: Run tests
+        run: ctest --output-on-failure
+        working-directory: build
+        env:
+          QT_QPA_PLATFORM: offscreen
+          

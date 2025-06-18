@@ -15,6 +15,9 @@ public:
 private:
     QSqlDatabase db;
     QString hashPassword(const QString &password);
+    bool isValidUserId(int userId);
+    bool isValidUsername(const QString& username);
+
 };
 
 #endif

@@ -41,5 +41,7 @@ jobs:
           fi
 
       - name: Run tests
-        run: ctest --verbose
+        run: ctest --output-on-failure
         working-directory: build
+        env:
+          QT_QPA_PLATFORM: offscreen

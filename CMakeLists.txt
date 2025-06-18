@@ -8,6 +8,9 @@ set(CMAKE_AUTORCC ON)
 
 # Find Qt6
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Sql Test)
+if (NOT Qt6_FOUND)
+  message(FATAL_ERROR "Qt6 not found. Please set CMAKE_PREFIX_PATH to the Qt6 installation directory (e.g., -DCMAKE_PREFIX_PATH=/path/to/qt/6.9.1/gcc_64)")
+endif()
 
 # Add Google Test submodule
 add_subdirectory(googletest EXCLUDE_FROM_ALL)
@@ -36,6 +39,3 @@ target_link_libraries(TicTacToe PRIVATE TicTacToeLib)
 
 # Add tests subdirectory
 add_subdirectory(tests)
-
- 
-

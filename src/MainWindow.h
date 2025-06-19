@@ -7,11 +7,16 @@
 #include "Game.h"
 #include "Database.h"
 
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
+
 public:
-// Add this parameter to your existing constructor
-explicit MainWindow(int userId, Database *db, bool testMode = false, QWidget *parent = nullptr);
+    explicit MainWindow(int userId, Database *db, bool testMode = false, QWidget *parent = nullptr);
+    ~MainWindow();
 
 private slots:
     void handleCellClick(int row, int col);
@@ -20,29 +25,32 @@ private slots:
     void restartGame();
     void showHistory();
     void logout();
-private:
-    void setupTestDefaults(); // NEW METHOD
-    // ... all your existing methods stay the same ...
 
-    // Add this new member variable
-    bool m_testMode; // NEW MEMBER
-    // ... all your existing members stay the same ...
+private:
+    void setupTestDefaults();
     void setupUI();
     void updateBoard();
     void updatePlayerIndicator();
     void showModeSelectionDialog();
     void showSymbolSelectionDialog();
     QString formatBoard(const QString &board);
+
+    // UI file
+    Ui::MainWindow *ui;
+
+    // Custom UI members
     QPushButton *cells[3][3];
+    QLabel *playerIndicator;
+    QLabel *modeIndicator;
+
+    // State
     int currentUserId;
     char currentPlayer;
     char playerSymbol;
     Database *db;
     Game *game;
-    QLabel *playerIndicator;
-    QLabel *modeIndicator;
     bool gameStarted;
+    bool m_testMode;
 };
 
-#endif
-
+#endif // MAINWINDOW_H

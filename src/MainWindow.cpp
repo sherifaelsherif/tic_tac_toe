@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "ui_mainwindow.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -13,7 +14,9 @@
 #include "AuthWindow.h"
 
 MainWindow::MainWindow(int userId, Database *db, bool testMode, QWidget *parent)
-    : QMainWindow(parent), currentUserId(userId), currentPlayer('X'), playerSymbol('X'), db(db), gameStarted(false), m_testMode(testMode) {
+    : QMainWindow(parent), ui(new Ui::MainWindow), currentUserId(userId), currentPlayer('X'), playerSymbol('X'), db(db), gameStarted(false), m_testMode(testMode) {
+    
+    ui->setupUi(this);  // Load the UI file first
     game = new Game(db);
     setupUI();
     
@@ -69,6 +72,10 @@ MainWindow::MainWindow(int userId, Database *db, bool testMode, QWidget *parent)
     );
 }
 
+MainWindow::~MainWindow() {
+    delete ui;
+}
+
 void MainWindow::setupTestDefaults() {
     // Set up the game in a ready-to-test state without showing dialogs
     game->startGame(true); // Default to VS AI
@@ -88,8 +95,8 @@ void MainWindow::setupTestDefaults() {
 }
 
 void MainWindow::setupUI() {
-    QWidget *centralWidget = new QWidget(this);
-    setCentralWidget(centralWidget);
+    // Use the centralwidget from the UI file
+    QWidget *centralWidget = ui->centralwidget;
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
 
     // Title
@@ -162,8 +169,9 @@ void MainWindow::setupUI() {
             cells[i][j] = new QPushButton("", this);
             cells[i][j]->setObjectName(QString("cell_%1_%2").arg(i).arg(j));
             cells[i][j]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            cells[i][j]->setEnabled(false); // Disable until game starts
-            cells[i][j]->setText("");       // Ensure empty
+            cells[i][j]->setEnabled(false);
+            cells[i][j]->setText("");
+            
             QString borderStyle;
             if (i == 0 && j == 0) borderStyle = "border-bottom: 1px solid #bb00ff; border-right: 1px solid #bb00ff;";
             else if (i == 0 && j == 1) borderStyle = "border-bottom: 1px solid #bb00ff; border-left: 1px solid #bb00ff; border-right: 1px solid #bb00ff;";
@@ -174,6 +182,7 @@ void MainWindow::setupUI() {
             else if (i == 2 && j == 0) borderStyle = "border-top: 1px solid #bb00ff; border-right: 1px solid #bb00ff;";
             else if (i == 2 && j == 1) borderStyle = "border-top: 1px solid #bb00ff; border-left: 1px solid #bb00ff; border-right: 1px solid #bb00ff;";
             else if (i == 2 && j == 2) borderStyle = "border-top: 1px solid #bb00ff; border-left: 1px solid #bb00ff;";
+            
             cells[i][j]->setStyleSheet(
                 QString(
                     "QPushButton {"
@@ -214,12 +223,14 @@ void MainWindow::handleCellClick(int row, int col) {
         }
         return;
     }
+    
     if (!game->makeMove(row, col, currentPlayer)) {
         if (!m_testMode) {
             QMessageBox::warning(this, "INVALID MOVE", "THIS CELL IS ALREADY TAKEN OR INVALID!");
         }
         return;
     }
+    
     updateBoard();
     if (game->checkWin(currentPlayer)) {
         char board[3][3];
@@ -306,6 +317,7 @@ void MainWindow::updateBoard() {
             else if (i == 2 && j == 0) borderStyle = "border-top: 1px solid #bb00ff; border-right: 1px solid #bb00ff;";
             else if (i == 2 && j == 1) borderStyle = "border-top: 1px solid #bb00ff; border-left: 1px solid #bb00ff; border-right: 1px solid #bb00ff;";
             else if (i == 2 && j == 2) borderStyle = "border-top: 1px solid #bb00ff; border-left: 1px solid #bb00ff;";
+            
             if (text == "X") {
                 cells[i][j]->setStyleSheet(
                     QString(
@@ -375,6 +387,7 @@ void MainWindow::updatePlayerIndicator() {
         );
         return;
     }
+    
     if (game->isVsAI()) {
         playerIndicator->setText(currentPlayer == playerSymbol ? QString("YOUR TURN (%1)").arg(currentPlayer) : QString("AI'S TURN (%1)").arg(playerSymbol == 'X' ? 'O' : 'X'));
     } else {
@@ -430,6 +443,7 @@ void MainWindow::restartGame() {
         }
         return;
     }
+    
     game->reset();
     currentPlayer = playerSymbol;
     updateBoard();

@@ -240,13 +240,20 @@ TEST_F(MainWindowTest, GameBoardHasGridLayout) {
 
 // ============= USER-SPECIFIC TESTS =============
 TEST_F(MainWindowTest, RegisteredUserHasHistoryButton) {
-    createMainWindow(1); // Registered user
+    createMainWindow(1); // Create with registered user ID
     QPushButton* historyButton = findButtonByText("HISTORY");
-    EXPECT_NE(historyButton, nullptr) << "Registered user should have history button";
-    if (historyButton) {
-        EXPECT_TRUE(historyButton->isVisible()) << "History button should be visible for registered user";
-    }
+    ASSERT_NE(historyButton, nullptr) << "History button should exist";
+    
+    // CRITICAL FIX: Show the window temporarily so isVisible() works correctly
+    mainWindow->show();
+    QApplication::processEvents();
+    
+    EXPECT_TRUE(historyButton->isVisible()) << "History button should be visible for registered user";
+    
+    // Hide it again for cleanup
+    mainWindow->hide();
 }
+
 
 TEST_F(MainWindowTest, GuestUserInterfaceDifferences) {
     // Test guest user

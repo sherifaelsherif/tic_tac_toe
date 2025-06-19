@@ -10,7 +10,9 @@
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(int userId, Database *db, QWidget *parent = nullptr);
+// Add this parameter to your existing constructor
+explicit MainWindow(int userId, Database *db, bool testMode = false, QWidget *parent = nullptr);
+
 private slots:
     void handleCellClick(int row, int col);
     void startGameVsAI();
@@ -19,6 +21,12 @@ private slots:
     void showHistory();
     void logout();
 private:
+    void setupTestDefaults(); // NEW METHOD
+    // ... all your existing methods stay the same ...
+
+    // Add this new member variable
+    bool m_testMode; // NEW MEMBER
+    // ... all your existing members stay the same ...
     void setupUI();
     void updateBoard();
     void updatePlayerIndicator();
@@ -37,3 +45,4 @@ private:
 };
 
 #endif
+

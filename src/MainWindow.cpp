@@ -16,7 +16,12 @@
 MainWindow::MainWindow(int userId, Database *db, bool testMode, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), currentUserId(userId), currentPlayer('X'), playerSymbol('X'), db(db), gameStarted(false), m_testMode(testMode) {
     
-    ui->setupUi(this);  // Load the UI file first
+    // FORCE test mode if environment variable is set
+    if (qEnvironmentVariableIsSet("TICTACTOE_TEST_MODE")) {
+        m_testMode = true;
+    }
+    
+    ui->setupUi(this); // Load the UI file first
     game = new Game(db);
     setupUI();
     

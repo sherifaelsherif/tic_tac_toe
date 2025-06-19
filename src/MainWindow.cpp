@@ -26,7 +26,7 @@ MainWindow::MainWindow(int userId, Database *db, bool testMode, QWidget *parent)
     setStyleSheet(
         "QMainWindow {"
         " background: qradialgradient(cx:0.5, cy:0.5, radius:1, fx:0.5, fy:0.5, stop:0 #0a0a1a, stop:1 #1c1c3a);"
-        " background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVChTY5i5f/8/Axjo6RlaWVkZGBgYGIiJiUlqampqa2vrt7e3t3d0dHT09PT09vb29vYODg72tra2Dg4ODg5OTk5OTi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLhYAXtY5pAAAAABJRU5ErkJggg==');"
+        " background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVChTY5i5f/8/Axjo6RlaWVkZGBgYGIiJiUlqampqa2vrt7e3t3d0dHT09PT09vb29vYODg72tra2Dg4ODg5OTk5OTi4uLi4uLi4uLi4uLi4uLi4uLi4uLhYAXtY5pAAAAABJRU5ErkJggg==');"
         " color: #ffffff;"
         "}"
         "QPushButton {"
@@ -209,18 +209,24 @@ void MainWindow::setupUI() {
 
 void MainWindow::handleCellClick(int row, int col) {
     if (!gameStarted) {
-        QMessageBox::warning(this, "GAME NOT STARTED", "PLEASE SELECT A GAME MODE!");
+        if (!m_testMode) {
+            QMessageBox::warning(this, "GAME NOT STARTED", "PLEASE SELECT A GAME MODE!");
+        }
         return;
     }
     if (!game->makeMove(row, col, currentPlayer)) {
-        QMessageBox::warning(this, "INVALID MOVE", "THIS CELL IS ALREADY TAKEN OR INVALID!");
+        if (!m_testMode) {
+            QMessageBox::warning(this, "INVALID MOVE", "THIS CELL IS ALREADY TAKEN OR INVALID!");
+        }
         return;
     }
     updateBoard();
     if (game->checkWin(currentPlayer)) {
         char board[3][3];
         game->getBoard(board);
-        QMessageBox::information(this, "RESULT", QString("PLAYER %1 WINS!").arg(currentPlayer));
+        if (!m_testMode) {
+            QMessageBox::information(this, "RESULT", QString("PLAYER %1 WINS!").arg(currentPlayer));
+        }
         if (currentUserId != -1) {
             db->saveGame(currentUserId, board, QString(currentPlayer));
         }
@@ -231,7 +237,9 @@ void MainWindow::handleCellClick(int row, int col) {
     } else if (game->isBoardFull()) {
         char board[3][3];
         game->getBoard(board);
-        QMessageBox::information(this, "RESULT", "IT'S A TIE!");
+        if (!m_testMode) {
+            QMessageBox::information(this, "RESULT", "IT'S A TIE!");
+        }
         if (currentUserId != -1) {
             db->saveGame(currentUserId, board, "Tie");
         }
@@ -247,7 +255,9 @@ void MainWindow::handleCellClick(int row, int col) {
             if (game->checkWin(aiSymbol)) {
                 char board[3][3];
                 game->getBoard(board);
-                QMessageBox::information(this, "RESULT", "AI WINS!");
+                if (!m_testMode) {
+                    QMessageBox::information(this, "RESULT", "AI WINS!");
+                }
                 if (currentUserId != -1) {
                     db->saveGame(currentUserId, board, QString(aiSymbol));
                 }
@@ -258,7 +268,9 @@ void MainWindow::handleCellClick(int row, int col) {
             } else if (game->isBoardFull()) {
                 char board[3][3];
                 game->getBoard(board);
-                QMessageBox::information(this, "RESULT", "IT'S A TIE!");
+                if (!m_testMode) {
+                    QMessageBox::information(this, "RESULT", "IT'S A TIE!");
+                }
                 if (currentUserId != -1) {
                     db->saveGame(currentUserId, board, "Tie");
                 }
@@ -379,6 +391,17 @@ void MainWindow::startGameVsAI() {
     game->startGame(true);
     if (!m_testMode) {
         showSymbolSelectionDialog();
+    } else {
+        // In test mode, set defaults and start immediately
+        playerSymbol = 'X';
+        currentPlayer = 'X';
+        modeIndicator->setText("MODE: VS AI");
+        updateBoard();
+        updatePlayerIndicator();
+        gameStarted = true;
+        for (int i = 0; i < 3; ++i)
+            for (int j = 0; j < 3; ++j)
+                cells[i][j]->setEnabled(true);
     }
 }
 
@@ -386,12 +409,25 @@ void MainWindow::startGameVsPlayer() {
     game->startGame(false);
     if (!m_testMode) {
         showSymbolSelectionDialog();
+    } else {
+        // In test mode, set defaults and start immediately
+        playerSymbol = 'X';
+        currentPlayer = 'X';
+        modeIndicator->setText("MODE: VS PLAYER");
+        updateBoard();
+        updatePlayerIndicator();
+        gameStarted = true;
+        for (int i = 0; i < 3; ++i)
+            for (int j = 0; j < 3; ++j)
+                cells[i][j]->setEnabled(true);
     }
 }
 
 void MainWindow::restartGame() {
     if (!gameStarted) {
-        QMessageBox::warning(this, "GAME NOT STARTED", "PLEASE SELECT A GAME MODE!");
+        if (!m_testMode) {
+            QMessageBox::warning(this, "GAME NOT STARTED", "PLEASE SELECT A GAME MODE!");
+        }
         return;
     }
     game->reset();
@@ -401,6 +437,9 @@ void MainWindow::restartGame() {
 }
 
 void MainWindow::showModeSelectionDialog() {
+    // Only show dialog if NOT in test mode
+    if (m_testMode) return;
+    
     QDialog *modeDialog = new QDialog(this);
     modeDialog->setWindowTitle("SELECT GAME MODE");
     QVBoxLayout *layout = new QVBoxLayout(modeDialog);
@@ -461,6 +500,9 @@ void MainWindow::showModeSelectionDialog() {
 }
 
 void MainWindow::showSymbolSelectionDialog() {
+    // Only show dialog if NOT in test mode
+    if (m_testMode) return;
+    
     QDialog *symbolDialog = new QDialog(this);
     symbolDialog->setWindowTitle("SELECT YOUR SYMBOL");
     QVBoxLayout *layout = new QVBoxLayout(symbolDialog);
@@ -541,6 +583,9 @@ void MainWindow::showSymbolSelectionDialog() {
 }
 
 void MainWindow::showHistory() {
+    // Only show dialog if NOT in test mode
+    if (m_testMode) return;
+    
     if (currentUserId == -1) {
         QMessageBox::information(this, "INFO", "GAME HISTORY IS NOT AVAILABLE IN GUEST MODE.");
         return;
@@ -689,6 +734,14 @@ QString MainWindow::formatBoard(const QString &board) {
 }
 
 void MainWindow::logout() {
+    // Only show dialog if NOT in test mode
+    if (m_testMode) {
+        AuthWindow *authWindow = new AuthWindow();
+        authWindow->show();
+        this->close();
+        return;
+    }
+    
     int choice = QMessageBox::question(this, "CONFIRM LOGOUT", "ARE YOU SURE YOU WANT TO LOGOUT?", QMessageBox::Yes | QMessageBox::No);
     if (choice == QMessageBox::Yes) {
         AuthWindow *authWindow = new AuthWindow();

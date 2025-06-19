@@ -104,3 +104,9 @@ void Game::getBoard(char board[3][3]) const {
         for (int j = 0; j < 3; ++j)
             board[i][j] = this->board[i][j];
 }
+
+void Game::setBoard(char board[3][3]) {
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            this->board[i][j] = board[i][j];
+}

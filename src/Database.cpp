@@ -22,28 +22,6 @@ Database::~Database() {
     db.close();
 }
 
-bool Database::isValidUserId(int userId) {
-    if (userId <= 0) {
-        return false;
-    }
-    
-    QSqlQuery query;
-    query.prepare("SELECT COUNT(*) FROM users WHERE id = ?");
-    query.addBindValue(userId);
-    
-    if (!query.exec() || !query.next()) {
-        return false;
-    }
-    
-    return query.value(0).toInt() > 0;
-}
-
-bool Database::isValidUsername(const QString& username) {
-    QString trimmedUsername = username.trimmed();
-    return !trimmedUsername.isEmpty();
-}
-
-
 QString Database::hashPassword(const QString &password) {
     return QString(QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256).toHex());
 }
@@ -64,9 +42,6 @@ int Database::authenticate(const QString &username, const QString &password) {
 }
 
 bool Database::registerUser(const QString &username, const QString &password) {
-    if (!isValidUsername(username)) {
-        return false;
-    }
     QSqlQuery query;
     query.prepare("INSERT INTO users (username, password) VALUES (:username, :password);");
     query.bindValue(":username", username);
@@ -79,9 +54,6 @@ bool Database::registerUser(const QString &username, const QString &password) {
 }
 
 bool Database::saveGame(int userId, char board[3][3], const QString &result) {
-    if (!isValidUserId(userId)) {
-        return false;
-    }
     QString boardStr;
     for (int i = 0; i < 3; ++i)
         for (int j = 0; j < 3; ++j)
@@ -102,7 +74,7 @@ bool Database::saveGame(int userId, char board[3][3], const QString &result) {
 QString Database::getGameHistory(int userId) {
     QString history;
     QSqlQuery query;
-    query.prepare("SELECT board, result, timestamp FROM games WHERE user_id = :user_id;");
+    query.prepare("SELECT board, result, timestamp FROM games WHERE user_id = :user_id ORDER BY timestamp DESC;");
     query.bindValue(":user_id", userId);
     if (!query.exec()) {
         qDebug() << "Get history error:" << query.lastError().text();
@@ -115,4 +87,35 @@ QString Database::getGameHistory(int userId) {
         history += QString("Game at %1: Board: %2, Result: %3\n").arg(timestamp, board, result);
     }
     return history.isEmpty() ? "No games played." : history;
+}
+
+QString Database::getGameBoard(int gameId) {
+    QSqlQuery query;
+    query.prepare("SELECT board FROM games WHERE id = :game_id;");
+    query.bindValue(":game_id", gameId);
+    if (!query.exec()) {
+        qDebug() << "Get game board error:" << query.lastError().text();
+        return "";
+    }
+    if (query.next()) {
+        return query.value(0).toString();
+    }
+    return "";
+}
+
+int Database::getGameId(int userId, const QString &timestamp, const QString &board, const QString &result) {
+    QSqlQuery query;
+    query.prepare("SELECT id FROM games WHERE user_id = :user_id AND timestamp = :timestamp AND board = :board AND result = :result;");
+    query.bindValue(":user_id", userId);
+    query.bindValue(":timestamp", timestamp);
+    query.bindValue(":board", board);
+    query.bindValue(":result", result);
+    if (!query.exec()) {
+        qDebug() << "Get game ID error:" << query.lastError().text();
+        return -1;
+    }
+    if (query.next()) {
+        return query.value(0).toInt();
+    }
+    return -1;
 }

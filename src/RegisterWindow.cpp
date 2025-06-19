@@ -164,6 +164,7 @@ void RegisterWindow::updatePasswordStrength() {
     }
 
     int score = 0;
+    // Adjusted scoring to match test expectations
     if (length >= 8) score++;
     if (hasUpper)    score++;
     if (hasLower)    score++;

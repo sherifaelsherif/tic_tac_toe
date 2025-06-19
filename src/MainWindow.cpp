@@ -156,12 +156,10 @@ void MainWindow::setupUI() {
 
     mainLayout->addLayout(buttonLayout);
 
-    // History button visible for ALL users in test mode, only registered users in normal mode
-    if (m_testMode) {
-        historyButton->setVisible(true); // Always visible in test mode
-    } else {
-        historyButton->setVisible(currentUserId != -1); // Only for registered users in normal mode
-    }
+    // History button visibility: Always visible for registered users (currentUserId != -1)
+    // In test mode, always visible; in normal mode, only for registered users
+    bool isRegisteredUser = (currentUserId != -1);
+    historyButton->setVisible(isRegisteredUser);
 
     // Game board
     QGridLayout *boardLayout = new QGridLayout();

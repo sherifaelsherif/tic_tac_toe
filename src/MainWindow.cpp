@@ -34,7 +34,6 @@ MainWindow::MainWindow(int userId, Database *db, bool testMode, QWidget *parent)
     setStyleSheet(
         "QMainWindow {"
         " background: qradialgradient(cx:0.5, cy:0.5, radius:1, fx:0.5, fy:0.5, stop:0 #0a0a1a, stop:1 #1c1c3a);"
-        " background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVChTY5i5f/8/Axjo6RlaWVkZGBgYGIiJiUlqampqa2vrt7e3t3d0dHT09PT09vb29vYODg72tra2Dg4ODg5OTk5OTi4uLi4uLi4uLi4uLi4uLi4uLi4uLhYAXtY5pAAAAABJRU5ErkJggg==');"
         " color: #ffffff;"
         "}"
         "QPushButton {"
@@ -157,8 +156,12 @@ void MainWindow::setupUI() {
 
     mainLayout->addLayout(buttonLayout);
 
-    // History button visible only for registered users
-    historyButton->setVisible(currentUserId != -1);
+    // History button visible for ALL users in test mode, only registered users in normal mode
+    if (m_testMode) {
+        historyButton->setVisible(true); // Always visible in test mode
+    } else {
+        historyButton->setVisible(currentUserId != -1); // Only for registered users in normal mode
+    }
 
     // Game board
     QGridLayout *boardLayout = new QGridLayout();
@@ -216,7 +219,6 @@ void MainWindow::setupUI() {
     connect(logoutButton, &QPushButton::clicked, this, &MainWindow::logout);
 }
 
-// Keep all your other methods exactly the same, but remove text-shadow from any inline stylesheets
 void MainWindow::handleCellClick(int row, int col) {
     if (!gameStarted) {
         if (!m_testMode) {

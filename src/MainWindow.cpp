@@ -45,12 +45,10 @@ MainWindow::MainWindow(int userId, Database *db, bool testMode, QWidget *parent)
         " padding: 8px;"
         " font-size: 16px;"
         " font-family: 'Orbitron', 'Arial', sans-serif;"
-        " text-shadow: 0 0 5px #bb00ff;"
         "}"
         "QPushButton:hover {"
         " background-color: rgba(60, 60, 90, 0.8);"
         " border: 2px solid #ff00ff;"
-        " text-shadow: 0 0 10px #ff00ff;"
         "}"
         "QLabel {"
         " color: #e0e0ff;"
@@ -111,7 +109,6 @@ void MainWindow::setupUI() {
         "font-size: 28px;"
         "font-weight: bold;"
         "color: #00eaff;"
-        "text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;"
     );
     mainLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
 
@@ -121,7 +118,6 @@ void MainWindow::setupUI() {
     modeIndicator->setStyleSheet(
         "font-size: 16px;"
         "color: #bb00ff;"
-        "text-shadow: 0 0 8px #bb00ff;"
     );
     mainLayout->addWidget(modeIndicator, 0, Qt::AlignCenter);
 
@@ -130,7 +126,6 @@ void MainWindow::setupUI() {
     playerIndicator->setStyleSheet(
         "font-size: 14px;"
         "color: #00eaff;"
-        "text-shadow: 0 0 8px #00eaff;"
     );
     mainLayout->addWidget(playerIndicator, 0, Qt::AlignCenter);
 
@@ -221,6 +216,7 @@ void MainWindow::setupUI() {
     connect(logoutButton, &QPushButton::clicked, this, &MainWindow::logout);
 }
 
+// Keep all your other methods exactly the same, but remove text-shadow from any inline stylesheets
 void MainWindow::handleCellClick(int row, int col) {
     if (!gameStarted) {
         if (!m_testMode) {
@@ -333,7 +329,6 @@ void MainWindow::updateBoard() {
                         " font-size: 40px;"
                         " font-family: 'Orbitron', 'Arial', sans-serif;"
                         " color: #00eaff;"
-                        " text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;"
                         " margin: 0px;"
                         " padding: 0px;"
                         " min-width: 100px;"
@@ -351,7 +346,6 @@ void MainWindow::updateBoard() {
                         " font-size: 40px;"
                         " font-family: 'Orbitron', 'Arial', sans-serif;"
                         " color: #ff00cc;"
-                        " text-shadow: 0 0 10px #ff00cc, 0 0 20px #ff00cc;"
                         " margin: 0px;"
                         " padding: 0px;"
                         " min-width: 100px;"
@@ -388,7 +382,7 @@ void MainWindow::updatePlayerIndicator() {
     if (!gameStarted) {
         playerIndicator->setText("SELECT A GAME MODE");
         playerIndicator->setStyleSheet(
-            "font-size: 14px; color: #bb00ff; text-shadow: 0 0 8px #bb00ff;"
+            "font-size: 14px; color: #bb00ff;"
         );
         return;
     }
@@ -400,8 +394,8 @@ void MainWindow::updatePlayerIndicator() {
     }
     playerIndicator->setStyleSheet(
         currentPlayer == 'X' ?
-        "font-size: 14px; color: #00eaff; text-shadow: 0 0 8px #00eaff;" :
-        "font-size: 14px; color: #ff00cc; text-shadow: 0 0 8px #ff00cc;"
+        "font-size: 14px; color: #00eaff;" :
+        "font-size: 14px; color: #ff00cc;"
     );
 }
 
@@ -482,12 +476,10 @@ void MainWindow::showModeSelectionDialog() {
         " padding: 8px;"
         " font-size: 16px;"
         " font-family: 'Orbitron', 'Arial', sans-serif;"
-        " text-shadow: 0 0 5px #bb00ff;"
         "}"
         "QPushButton:hover {"
         " background-color: rgba(60, 60, 90, 0.8);"
         " border: 2px solid #ff00ff;"
-        " text-shadow: 0 0 10px #ff00ff;"
         "}"
     );
     vsPlayerButton->setStyleSheet(
@@ -499,12 +491,10 @@ void MainWindow::showModeSelectionDialog() {
         " padding: 8px;"
         " font-size: 16px;"
         " font-family: 'Orbitron', 'Arial', sans-serif;"
-        " text-shadow: 0 0 5px #bb00ff;"
         "}"
         "QPushButton:hover {"
         " background-color: rgba(60, 60, 90, 0.8);"
         " border: 2px solid #ff00ff;"
-        " text-shadow: 0 0 10px #ff00ff;"
         "}"
     );
     layout->addWidget(vsAIButton);
@@ -545,12 +535,10 @@ void MainWindow::showSymbolSelectionDialog() {
         " padding: 8px;"
         " font-size: 16px;"
         " font-family: 'Orbitron', 'Arial', sans-serif;"
-        " text-shadow: 0 0 5px #bb00ff;"
         "}"
         "QPushButton:hover {"
         " background-color: rgba(60, 60, 90, 0.8);"
         " border: 2px solid #ff00ff;"
-        " text-shadow: 0 0 10px #ff00ff;"
         "}"
     );
     oButton->setStyleSheet(
@@ -562,12 +550,10 @@ void MainWindow::showSymbolSelectionDialog() {
         " padding: 8px;"
         " font-size: 16px;"
         " font-family: 'Orbitron', 'Arial', sans-serif;"
-        " text-shadow: 0 0 5px #bb00ff;"
         "}"
         "QPushButton:hover {"
         " background-color: rgba(60, 60, 90, 0.8);"
         " border: 2px solid #ff00ff;"
-        " text-shadow: 0 0 10px #ff00ff;"
         "}"
     );
     layout->addWidget(xButton);
@@ -640,7 +626,6 @@ void MainWindow::showHistory() {
             titleLabel->setStyleSheet(
                 "font-size: 16px;"
                 "color: #00eaff;"
-                "text-shadow: 0 0 8px #00eaff;"
             );
             entryLayout->addWidget(titleLabel);
 
@@ -648,7 +633,6 @@ void MainWindow::showHistory() {
             timestampLabel->setStyleSheet(
                 "font-size: 12px;"
                 "color: #bb00ff;"
-                "text-shadow: 0 0 5px #bb00ff;"
             );
             entryLayout->addWidget(timestampLabel);
 
@@ -680,7 +664,6 @@ void MainWindow::showHistory() {
                                 " font-size: 20px;"
                                 " font-family: 'Orbitron', 'Arial', sans-serif;"
                                 " color: #00eaff;"
-                                " text-shadow: 0 0 5px #00eaff;"
                                 " text-align: center;"
                                 " min-width: 30px;"
                                 " min-height: 30px;"
@@ -696,7 +679,6 @@ void MainWindow::showHistory() {
                                 " font-size: 20px;"
                                 " font-family: 'Orbitron', 'Arial', sans-serif;"
                                 " color: #ff00cc;"
-                                " text-shadow: 0 0 5px #ff00cc;"
                                 " text-align: center;"
                                 " min-width: 30px;"
                                 " min-height: 30px;"
@@ -728,7 +710,6 @@ void MainWindow::showHistory() {
             resultLabel->setStyleSheet(
                 "font-size: 12px;"
                 "color: #bb00ff;"
-                "text-shadow: 0 0 5px #bb00ff;"
             );
             entryLayout->addWidget(resultLabel);
 

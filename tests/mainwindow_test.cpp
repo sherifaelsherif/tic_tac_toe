@@ -530,3 +530,5 @@ TEST_F(MainWindowTest, ComponentsHaveReasonableObjectNames) {
         std::cout << "Note: Consider adding object names to UI components for better testability and accessibility\n";
     }
 }
+
+

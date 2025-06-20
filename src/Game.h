@@ -14,7 +14,6 @@ public:
     void reset();
     bool isVsAI() const { return vsAI; }
     void getBoard(char board[3][3]) const;
-    void setBoard(char board[3][3]); // New method to set board state
 private:
     int minimax(char board[3][3], int depth, bool isMax, int alpha, int beta, char aiSymbol, char playerSymbol);
     char board[3][3];

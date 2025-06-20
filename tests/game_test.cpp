@@ -39,30 +39,9 @@ protected:
     Game* game;
     MockDatabase* mockDb;
     
-    // Helper function to set up a specific board state
-    void setBoardState(const char expectedBoard[3][3]) {
-        game->reset();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (expectedBoard[i][j] != ' ') {
-                    game->makeMove(i, j, expectedBoard[i][j]);
-                }
-            }
-        }
-    }
+      
     
-    // Helper function to verify board state
-    void verifyBoardState(const char expectedBoard[3][3]) {
-        char actualBoard[3][3];
-        game->getBoard(actualBoard);
-        
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                EXPECT_EQ(actualBoard[i][j], expectedBoard[i][j]) 
-                    << "Board mismatch at position (" << i << "," << j << ")";
-            }
-        }
-    }
+     
     
      
     

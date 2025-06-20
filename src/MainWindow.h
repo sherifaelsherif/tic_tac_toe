@@ -6,51 +6,43 @@
 #include <QLabel>
 #include "Game.h"
 #include "Database.h"
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+#include <QTimer>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
-
 public:
-    explicit MainWindow(int userId, Database *db, bool testMode = false, QWidget *parent = nullptr);
-    ~MainWindow();
-
+    MainWindow(int userId, Database *db, QWidget *parent = nullptr);
 private slots:
     void handleCellClick(int row, int col);
-    void startGameVsAI();
+    void startGameVsAI(Game::Difficulty difficulty = Game::Difficulty::Medium);
     void startGameVsPlayer();
     void restartGame();
     void showHistory();
+    void replayGame(const QString &moves, const QString &result);
+    void processReplayMove();
     void logout();
-
 private:
-    void setupTestDefaults();
     void setupUI();
     void updateBoard();
     void updatePlayerIndicator();
     void showModeSelectionDialog();
     void showSymbolSelectionDialog();
+    void showDifficultySelectionDialog();
     QString formatBoard(const QString &board);
-
-    // UI file
-    Ui::MainWindow *ui;
-
-    // Custom UI members
     QPushButton *cells[3][3];
-    QLabel *playerIndicator;
-    QLabel *modeIndicator;
-
-    // State
     int currentUserId;
     char currentPlayer;
     char playerSymbol;
     Database *db;
     Game *game;
+    QLabel *playerIndicator;
+    QLabel *modeIndicator;
     bool gameStarted;
-    bool m_testMode;
+    Game::Difficulty aiDifficulty;
+    QTimer *replayTimer;
+    QStringList replayMoves;
+    int replayIndex;
+    char replayBoard[3][3];
 };
 
-#endif // MAINWINDOW_H
+#endif

@@ -10,14 +10,11 @@ public:
     ~Database();
     int authenticate(const QString &username, const QString &password);
     bool registerUser(const QString &username, const QString &password);
-    bool saveGame(int userId, char board[3][3], const QString &result);
+    bool saveGame(int userId, const QString &moves, const QString &result);
     QString getGameHistory(int userId);
 private:
     QSqlDatabase db;
     QString hashPassword(const QString &password);
-    bool isValidUserId(int userId);
-    bool isValidUsername(const QString& username);
-
 };
 
 #endif
